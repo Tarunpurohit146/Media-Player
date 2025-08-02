@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/no-video.png</file>
+        <file>gif/folder.gif</file>
+        <file>gif/network.gif</file>
+        <file>images/file.png</file>
+        <file>images/network.png</file>
+        <file>images/empty-folder.png</file>
+        <file>style/mainstyle.qss</file>
+        <file>images/bg1.webp</file>
+        <file>images/bg2 - Copy.webp</file>
+        <file>images/pause.png</file>
+        <file>images/play.png</file>
+        <file>images/volume.png</file>
+        <file>images/music.png</file>
+        <file>images/stop-button.png</file>
+        <file>images/fast-forward.png</file>
+        <file>images/rewind.png</file>
+    </qresource>
+</RCC>
