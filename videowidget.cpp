@@ -15,6 +15,7 @@ VideoWidget::VideoWidget(QWidget *parent)
     mainLayout->setContentsMargins(0,0,0,0);
     this->setLayout(mainLayout);
     this->installEventFilter(this);
+    this->setFocusPolicy(Qt::StrongFocus);
 }
 
 VideoWidget::~VideoWidget(){
@@ -108,7 +109,6 @@ void VideoWidget::videoPosition(qint64 position)
 {
     if(progressBar)
     {
-        qDebug() << "position";
         progressBar->setValue(position);
     }
 }
@@ -139,10 +139,10 @@ void VideoWidget::setUpStatusBar() {
     playPauseButton = new QPushButton(statusBar);
     playPauseButton->setIcon(QIcon(":/images/pause.png"));
     playPauseButton->setIconSize(QSize(35,35));
-    QPushButton *skipBackButton = new QPushButton(statusBar);
+    skipBackButton = new QPushButton(statusBar);
     skipBackButton->setIcon(QIcon(":/images/rewind.png"));
     skipBackButton->setIconSize(QSize(35, 35));
-    QPushButton *skipForwardButton = new QPushButton(statusBar);
+    skipForwardButton = new QPushButton(statusBar);
     skipForwardButton->setIcon(QIcon(":/images/fast-forward.png"));
     skipForwardButton->setIconSize(QSize(35, 35));
     volumeButton = new QPushButton(statusBar);
@@ -271,6 +271,7 @@ bool VideoWidget::eventFilter(QObject *obj, QEvent *event){
         }
         else if(event->type() == QEvent::MouseButtonPress)
         {
+            this->setFocus();
             if(statusBar->isVisible()){
                 closeVolumeWidget();
                 statusBar->hide();
@@ -283,13 +284,23 @@ bool VideoWidget::eventFilter(QObject *obj, QEvent *event){
         }
         else if(event->type() == QEvent::MouseButtonDblClick)
         {
+            this->setFocus();
             if(statusBar->isVisible())
                 statusBar->hide();
 
             closeVolumeWidget();
             if(!this->isFullScreen()) {
                 this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+
                 this->showFullScreen();
+                if(view)
+                {
+                    view->setGeometry(this->rect());
+                    view->scene()->setSceneRect(view->rect());
+                    videoItem->setSize(view->size());
+                    videoItem->setPos(0, 0);
+                    view->fitInView(videoItem, Qt::KeepAspectRatio);
+                }
             } else {
                 this->setWindowFlags(Qt::Widget);
                 emit resetParent();
@@ -317,4 +328,24 @@ void VideoWidget::closeVolumeWidget()
         delete volume;
         volume = nullptr;
     }
+}
+
+void VideoWidget::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Space)
+    {
+        if(playPauseButton)
+            playPauseButton->click();
+    }
+    else if(event->key() == Qt::Key_Right)
+    {
+        if(skipForwardButton)
+            skipForwardButton->click();
+    }
+    else if(event->key() == Qt::Key_Left)
+    {
+        if(skipBackButton)
+            skipBackButton->click();
+    }
+    return QWidget::keyPressEvent(event);
 }

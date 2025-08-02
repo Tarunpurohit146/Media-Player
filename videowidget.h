@@ -15,7 +15,9 @@
 #include <QGraphicsProxyWidget>
 #include <QAudioOutput>
 #include <QToolTip>
+#include <QPointer>
 #include <QTimer>
+#include <QKeyEvent>
 
 class VideoWidget : public QWidget
 {
@@ -33,6 +35,7 @@ public slots:
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 
+    void keyPressEvent(QKeyEvent *event) override;
 signals:
     void resetParent();
     void closeVideoWidget();
@@ -45,10 +48,12 @@ private slots:
     void videoPosition(qint64 position);
     void playerStatus(QMediaPlayer::MediaStatus status);
 private:
-    QGraphicsScene *scene;
-    QGraphicsView *view;
-    QGraphicsVideoItem *videoItem;
-    QGraphicsProxyWidget *proxyWidget;
+    QPointer<QGraphicsScene> scene;
+    QPointer<QGraphicsView> view;
+    QPointer<QGraphicsVideoItem> videoItem;
+    QPointer<QPushButton> skipForwardButton;
+    QPointer<QPushButton> skipBackButton;
+    QPointer<QGraphicsProxyWidget> proxyWidget;
 
     QPushButton *playPauseButton;
 
@@ -60,13 +65,13 @@ private:
 
     QSlider *progressBar;
 
-    QMediaPlayer *player;
-    QAudioOutput *audio;
+    QPointer<QMediaPlayer> player;
+    QPointer<QAudioOutput> audio;
 
-    QWidget *volume;
+    QPointer<QWidget> volume;
 
-    QWidget *baseWidget;
-    QWidget *statusBar;
+    QPointer<QWidget> baseWidget;
+    QPointer<QWidget> statusBar;
 
     void setUpStatusBar();
     void cleanUp();
